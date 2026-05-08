@@ -8,7 +8,7 @@
 // @connect     cms-public-artifacts.artlist.io
 // @connect     cms-artifacts.artlist.io
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
-// @version     2.9
+// @version     3.0
 // @run-at	    document-start
 // @updateURL   https://github.com/xNasuni/artlist-downloader/raw/main/artlist-downloader.user.js
 // @downloadURL https://github.com/xNasuni/artlist-downloader/raw/main/artlist-downloader.user.js
@@ -61,6 +61,9 @@ async function ShowSaveFilePickerForURL(url, filename) {
             GM_xmlhttpRequest({
                 method: 'GET',
                 url: url,
+                headers: {
+                    Referer: 'https://artlist.io/'
+                },
                 responseType: 'blob',
                 onload: res => {
                     if (res.response) resolve(res.response)
@@ -71,7 +74,11 @@ async function ShowSaveFilePickerForURL(url, filename) {
         })
     } else {
         console.warn('using native fetch, GM_xmlhttpRequest not found')
-        blobDataFromURL = await fetch(url).then(r => r.blob())
+        blobDataFromURL = await fetch(url, {
+            headers: {
+                Referer: 'https://artlist.io/'
+            }
+        }).then(r => r.blob())
     }
 
     try {
